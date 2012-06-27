@@ -4,3 +4,16 @@
 *.jar
 *.war
 *.ear
+.checkstyle
+.classpath
+.pmd
+.project
+.ruleset
+.settings/
+.swp
+target/
+velocity.log
+*.ipr
+*.iml
+*.iws
+.idea
