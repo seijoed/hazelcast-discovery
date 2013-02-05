@@ -25,6 +25,7 @@
         <activemq.version>5.6.0</activemq.version>
         <hazelcast.version>2.0.2</hazelcast.version>
         <log4jVersion>1.2.16</log4jVersion>
+        <logback-version>1.0.9</logback-version>
         <slf4j-version>1.6.4</slf4j-version>
         <jdk.version>1.6</jdk.version>
         <compiler.fork>1.6</compiler.fork>
@@ -350,9 +351,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j-version}</version>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

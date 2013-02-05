@@ -12,10 +12,7 @@
     <packaging>bundle</packaging>
     <artifactId>hazelcast-discovery</artifactId>
     <properties>
-        <savoirtech.osgi.import>
-            *
-        </savoirtech.osgi.import>
-
+        <savoirtech.osgi.import>*</savoirtech.osgi.import>
         <savoirtech.osgi.main-class>com.savoirtech.activemq.discovery.HazelCastDiscoveryParent</savoirtech.osgi.main-class>
     </properties>
     <dependencies>
@@ -27,6 +24,12 @@
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
     </dependencies>
 
     <!-- Copy in Hazelcast -->
@@ -46,7 +49,7 @@
                                 <includes>
                                     <include>com.hazelcast:hazelcast</include>
                                     <include>org.slf4j:slf4j-api</include>
-                                    <include>org.slf4j:slf4j-log4j12</include>
+
                                 </includes>
                             </artifactSet>
                             <filters>
@@ -56,10 +59,6 @@
                                 </filter>
                                 <filter>
                                     <artifact>org.slf4j:slf4j-api</artifact>
-                                </filter>
-
-                                <filter>
-                                    <artifact>org.slf4j:slf4j-log4j12</artifact>
                                 </filter>
                             </filters>
                             <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
