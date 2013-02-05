@@ -3,11 +3,18 @@ hazelcast-discovery
 
 ActiveMQ : Hazelcast discovery module
 
-Drop a Hazelcast jar and the hazelcast discovery jar in the lib dir.
+Drop the hazelcast discovery jar in the lib dir.
 
 configure a network connector.
 
-On the "master" <-- The master could be anything running HazelCast
+On the "master" <-- The master could be anything running HazelCast or execute the JAR file directly for a stand-alone master.
+
+    Configuration can be provided in cluster.properties.
+
+        port=5009
+        address=0.0.0.0
+        clusterName=AMQ
+        members= <Comma separated list>
 
             <networkConnectors>
               <networkConnector uri="hazelcast://localhost?port=5009&amp;service=tcp://127.0.0.1:61616"
