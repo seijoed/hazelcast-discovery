@@ -43,7 +43,9 @@ import org.apache.activemq.transport.discovery.DiscoveryListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HazelcastDiscoveryAgent implements DiscoveryAgent, EntryListener, MembershipListener {
+public class
+
+    HazelcastDiscoveryAgent implements DiscoveryAgent, EntryListener, MembershipListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastDiscoveryAgent.class);
 
@@ -54,7 +56,7 @@ public class HazelcastDiscoveryAgent implements DiscoveryAgent, EntryListener, M
     private Config cfg;
     private NetworkConfig network;
     private String multicast;
-    private final static String clusterName = "AMQ";
+    private String clusterName = "AMQ";
     private String parents;
 
     private AtomicBoolean started = new AtomicBoolean(false);
@@ -154,16 +156,16 @@ public class HazelcastDiscoveryAgent implements DiscoveryAgent, EntryListener, M
     }
 
     private void addServices(EntryEvent entryEvent) {
-        LOG.debug("Addition " + entryEvent);
-        if (!entryEvent.getValue().equals(service)) {
+        LOG.info("Addition " + entryEvent);
+        if (!entryEvent.getValue().equals(service) && !entryEvent.getValue().equals("hazelcast-parent")) {
             this.discoveryListener.onServiceAdd(new DiscoveryEvent(entryEvent.getValue().toString()));
             sentEvents.add(entryEvent.getValue().toString());
         }
         // When we add ourselves, lets add the others as well.
 
         for (String remotes : brokerData.values()) {
-            if (!remotes.equals(service) && !sentEvents.contains(remotes)) {
-                LOG.debug("Adding connectors for " + remotes);
+            if (!remotes.equals(service) && !sentEvents.contains(remotes) && !remotes.equals("hazelcast-parent")) {
+                LOG.info("Adding connectors for " + remotes);
                 this.discoveryListener.onServiceAdd(new DiscoveryEvent(remotes));
             }
         }
@@ -183,14 +185,14 @@ public class HazelcastDiscoveryAgent implements DiscoveryAgent, EntryListener, M
 
     @Override
     public void entryUpdated(EntryEvent entryEvent) {
-        LOG.debug("Update " + entryEvent);
+        LOG.info("Update " + entryEvent);
         addServices(entryEvent);
     }
 
     @Override
     public void entryEvicted(EntryEvent entryEvent) {
-        LOG.debug("Eviction " + entryEvent);
-        //TODO
+        LOG.info("Eviction " + entryEvent);
+        /* TODO */
     }
 
     @Override
@@ -198,8 +200,8 @@ public class HazelcastDiscoveryAgent implements DiscoveryAgent, EntryListener, M
         LOG.debug("Member added to cluster " + membershipEvent);
 
         for (String remotes : brokerData.values()) {
-            if (!remotes.equals(service) && !sentEvents.contains(remotes)) {
-                LOG.debug("Adding connectors for " + remotes);
+            if (!remotes.equals(service) && !sentEvents.contains(remotes) && !remotes.equals("hazelcast-parent")) {
+                LOG.info("Adding connectors for " + remotes);
                 this.discoveryListener.onServiceAdd(new DiscoveryEvent(remotes));
             }
         }
@@ -207,10 +209,22 @@ public class HazelcastDiscoveryAgent implements DiscoveryAgent, EntryListener, M
 
     @Override
     public void memberRemoved(MembershipEvent membershipEvent) {
-        LOG.debug("Member removed from cluster " + membershipEvent);
+        LOG.info("Member removed from cluster " + membershipEvent);
+
+        LOG.info("Preparing to remove " + brokerData.get(membershipEvent.getMember().getInetSocketAddress().toString()));
+        DiscoveryEvent e = new DiscoveryEvent(brokerData.get(membershipEvent.getMember().getInetSocketAddress().toString()));
+        this.discoveryListener.onServiceRemove(e);
     }
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
+
+    public String getClusterName() {
+        return clusterName;
     }
 }
